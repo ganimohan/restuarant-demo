@@ -36,7 +36,8 @@ public class Dish implements Comparable<Dish> {
 
 	@Override
 	public boolean equals(Object dish) {
-		return this.getSatisfactionNumber() == ((Dish) dish).getSatisfactionNumber();
+		return this.getSatisfactionNumber() == ((Dish) dish).getSatisfactionNumber()
+				&& this.getTimeTakenToConsume() == ((Dish) dish).getSatisfactionNumber();
 
 	}
 

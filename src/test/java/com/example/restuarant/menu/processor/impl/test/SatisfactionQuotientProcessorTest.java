@@ -36,7 +36,7 @@ public class SatisfactionQuotientProcessorTest {
 		menuField.setAccessible(true);
 		menuField.set(processor, menu);
 		int highestQuotientFactor = this.processor.processMenu();
-		org.junit.Assert.assertEquals(1829, highestQuotientFactor);
+		org.junit.Assert.assertEquals(2448727, highestQuotientFactor);
 	}
 
 	@Test(expected = DataNotFoundException.class)

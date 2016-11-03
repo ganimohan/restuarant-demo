@@ -1,6 +1,8 @@
 package com.example.restuarant.model;
 
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * This class models the menu
@@ -9,18 +11,18 @@ import java.util.SortedSet;
  *
  */
 public class Menu {
-	
-	private SortedSet<Dish> dishes;
-	
-	private long totalTime;
-	
-	private long dischesCount;
 
-	public long getDischesCount() {
+	private SortedSet<Dish> dishes;
+
+	private int totalTime;
+
+	private int dischesCount;
+
+	public int getDischesCount() {
 		return dischesCount;
 	}
 
-	public void setDischesCount(long dischesCount) {
+	public void setDischesCount(int dischesCount) {
 		this.dischesCount = dischesCount;
 	}
 
@@ -32,14 +34,11 @@ public class Menu {
 		this.dishes = dishes;
 	}
 
-	public long getTotalTime() {
+	public int getTotalTime() {
 		return totalTime;
 	}
 
-	public void setTotalTime(long totalTime) {
+	public void setTotalTime(int totalTime) {
 		this.totalTime = totalTime;
 	}
-	
-	
-
 }

@@ -22,7 +22,8 @@ import com.example.restuarant.model.Menu;
 public class FileInputDataSource extends DataSource {
 
 	/**
-	 * Reference to the input data file. The same can be made configurable in application.properties.
+	 * Reference to the input data file. The same can be made configurable in
+	 * application.properties.
 	 */
 	private static final String INPUT_DATA = "data.txt";
 
@@ -46,23 +47,20 @@ public class FileInputDataSource extends DataSource {
 				String dataLine = scanner.nextLine();
 				String[] items = dataLine.split(INPUT_DATA_SEPARATOR);
 				if (!menuProcessed) {
-					menu.setTotalTime(Long.valueOf(items[0]));
-					menu.setDischesCount(Long.valueOf(items[1]));
+					menu.setTotalTime(Integer.valueOf(items[0]));
+					menu.setDischesCount(Integer.valueOf(items[1]));
 					menuProcessed = true;
 				} else {
 					Dish dish = new Dish();
-					int timeTakenToConsume = Integer.valueOf(items[0]);
-					if (timeTakenToConsume <= menu.getTotalTime()) {
-						dish.setTimeTakenToConsume(Integer.valueOf(items[0]));
-						dish.setSatisfactionNumber(Integer.valueOf(items[1]));
-						menu.getDishes().add(dish);
-					}
+					dish.setSatisfactionNumber(Integer.valueOf(items[0]));
+					dish.setTimeTakenToConsume(Integer.valueOf(items[1]));
+					menu.getDishes().add(dish);
 				}
 			}
 		} catch (IOException e) {
 			String message = "Failed to parse the input data file";
 			logger.error(message);
-			throw new InvalidDatasourceException(message,e);
+			throw new InvalidDatasourceException(message, e);
 		} finally {
 			scanner.close();
 		}

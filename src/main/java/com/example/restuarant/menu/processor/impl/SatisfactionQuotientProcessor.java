@@ -1,11 +1,11 @@
 package com.example.restuarant.menu.processor.impl;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.restuarant.exception.DataNotFoundException;
 import com.example.restuarant.menu.processor.IMenuProcessor;
 import com.example.restuarant.model.Dish;
 import com.example.restuarant.model.Menu;
@@ -25,38 +25,46 @@ public class SatisfactionQuotientProcessor implements IMenuProcessor {
 	private Menu menu;
 
 	@Override
-	public Integer processMenu() throws DataNotFoundException {
-		int highSatisfactionNumber = 0;
-		if (menu != null) {
-			Set<Dish> dishes = menu.getDishes();
-			Object[] dishArray = dishes.toArray();
-			for (int i = dishArray.length - 1; i >= 0; i--) {
-				Dish highTimeDish = (Dish) dishArray[i];
-				int dishConsumedTime = highTimeDish.getTimeTakenToConsume();
-				if (highTimeDish.getTimeTakenToConsume() == menu.getTotalTime()) {
-					highSatisfactionNumber = highTimeDish.getSatisfactionNumber();
-					break;
-				}
-				int satisfactionNumber = highTimeDish.getSatisfactionNumber();
-				for (int j = 0; j < dishArray.length; j++) {
-					Dish lowTimeDish = (Dish) dishArray[j];
-					if (highTimeDish != lowTimeDish) {
-						dishConsumedTime += lowTimeDish.getTimeTakenToConsume();
-						if (dishConsumedTime < menu.getTotalTime()) {
-							satisfactionNumber += lowTimeDish.getSatisfactionNumber();
-						} else {
-							break;
-						}
-					}
-				}
-				if (satisfactionNumber > highSatisfactionNumber) {
-					highSatisfactionNumber = satisfactionNumber;
+	public Integer processMenu() {
+
+		int menuItems = this.menu.getDishes().size();
+		int menuTime = this.menu.getTotalTime();
+
+		Set<Dish> dishes = this.menu.getDishes();
+		Iterator<Dish> ite = dishes.iterator();
+
+		Integer[] dishesTime = new Integer[dishes.size()];
+		Integer[] satisfactionValue = new Integer[dishes.size()];
+		int i = 0;
+
+		while (ite.hasNext()) {
+			Dish dish = ite.next();
+			dishesTime[i] = dish.getTimeTakenToConsume();
+			satisfactionValue[i] = dish.getSatisfactionNumber();
+			i++;
+		}
+
+		int[][] satisfactionMatrix = new int[menuItems + 1][menuTime + 1];
+
+		for (int col = 0; col <= menuTime; col++) {
+			satisfactionMatrix[0][col] = 0;
+		}
+
+		for (int row = 0; row <= menuItems; row++) {
+			satisfactionMatrix[row][0] = 0;
+		}
+
+		for (int item = 1; item <= menuItems; item++) {
+			for (int time = 1; time <= menuTime; time++) {
+				if (dishesTime[item - 1] <= time) {
+					satisfactionMatrix[item][time] = Math.max(
+							satisfactionValue[item - 1] + satisfactionMatrix[item - 1][time - dishesTime[item - 1]],
+							satisfactionMatrix[item - 1][time]);
+				} else {
+					satisfactionMatrix[item][time] = satisfactionMatrix[item - 1][time];
 				}
 			}
-			return highSatisfactionNumber;
 		}
-		String message = "Invalid menu";
-		logger.error(message);
-		throw new DataNotFoundException(message);
+		return satisfactionMatrix[menuItems][menuTime];
 	}
 }
